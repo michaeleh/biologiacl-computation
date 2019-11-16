@@ -1,7 +1,7 @@
 import random
 
 from question2.cell import Person, Sex, Couple
-from question2.consts import *
+from question2.config import *
 
 population = {}
 generations = 0
@@ -135,6 +135,9 @@ def better_apart(couple, p):
     :param p: couple or person to swap
     :return: new or same (coupe,p) tuple
     """
+    if not CAN_BREAKUP:
+        return couple, p
+
     current_val = couple.happiness_val() + p.happiness_val()
     p = couple.swap(p)
     new_val = couple.happiness_val() + p.happiness_val()
@@ -145,4 +148,4 @@ def better_apart(couple, p):
 
 
 def singles_left():
-    return len([p for p in population.values() if p.sex != Sex.Couple])>0
+    return len([p for p in population.values() if p.sex != Sex.Couple]) > 0

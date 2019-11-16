@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 
-from question2.consts import WIDTH, HEIGHT
+from question2.config import *
 
 
 def get_cell_radius(x, y, r=1):
@@ -104,6 +104,10 @@ class Couple(Cell):
 
     def best_match(self, neighbors):
         pass
+
+    def move(self, neighbors):
+        if COUPLE_CAN_MOVE:
+            super().move(neighbors)
 
 
 class Sex(Enum):

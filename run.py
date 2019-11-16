@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 
 from question2.automata import generate_population, next_generation, population, get_generation_number, happiness_value, \
     singles_left
+from question2.config import SKIP_TO_THE_END
 from question2.gui import start_gui
 
 
@@ -24,13 +25,14 @@ if __name__ == "__main__":
     happiness_per_gen = {}
     generate_population()
 
-    while True:
+    while SKIP_TO_THE_END:
         sample_happiness()
         next_generation()
         if not singles_left():
             break
-    start_gui()
     sample_happiness()
+
+    start_gui()
 
     print(len(population))
 

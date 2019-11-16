@@ -2,7 +2,7 @@ from tkinter import *
 
 from question2.automata import next_generation, population, happiness_value, get_generation_number
 from question2.cell import Cell
-from question2.consts import *
+from question2.config import *
 
 HAPPINESS = 'happiness'
 GENERATIONS = 'generations'
