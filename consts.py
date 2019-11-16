@@ -1,0 +1,2 @@
+HEIGHT = 30
+WIDTH = 30
