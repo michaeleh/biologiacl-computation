@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 
-from question2.consts import WIDTH, HEIGHT
+from question2.config import *
 
 
 def get_cell_radius(x, y, r=1):
@@ -22,6 +22,9 @@ class Cell:
         self.value = ''
         self.x = 0
         self.y = 0
+
+    def happiness_val(self):
+        return 0
 
     def get_color(self):
         return Sex.Other.value
@@ -46,7 +49,6 @@ class Person(Cell):
         self.y = y
         self.sex = sex
         self.value = random.randint(0, 100)
-        self.happiness_val = 0
 
     def get_color(self):
         return self.sex.value
@@ -62,6 +64,12 @@ class Person(Cell):
                     best_match = p
         return best_match
 
+    def swap(self, person):
+        tmp_val = self.value
+        self.value = person.value
+        person.value = tmp_val
+        return person
+
 
 class Couple(Cell):
     def __init__(self, man, woman) -> None:
@@ -72,16 +80,34 @@ class Couple(Cell):
         self.woman = woman
         self.value = abs(man.value - woman.value)
         self.sex = Sex.Couple
-        self.happiness_val = 100 - self.value
+
+    def happiness_val(self):
+        return 100 - self.value
 
     def get_color(self):
         return self.sex.value
 
-    def best_match(self):
-        return None
+    def swap(self, cell):
+        if cell.sex == Sex.Male:
+            self.value = abs(self.woman.value - cell.value)
+            return self.man.swap(cell)
+        if cell.sex == Sex.Female:
+            self.value = abs(self.man.value - cell.value)
+            return self.woman.swap(cell)
 
-    def move(self, n):
+        cell.man = self.man.swap(cell.man)
+        cell.woman = self.woman.swap(cell.woman)
+        tmp_val = self.value
+        self.value = cell.value
+        cell.value = tmp_val
+        return cell
+
+    def best_match(self, neighbors):
         pass
+
+    def move(self, neighbors):
+        if COUPLE_CAN_MOVE:
+            super().move(neighbors)
 
 
 class Sex(Enum):

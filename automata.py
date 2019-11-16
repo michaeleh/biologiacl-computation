@@ -1,7 +1,7 @@
 import random
 
 from question2.cell import Person, Sex, Couple
-from question2.consts import *
+from question2.config import *
 
 population = {}
 generations = 0
@@ -47,17 +47,19 @@ def generate_population(num_of_men=50, num_of_women=50):
         add_person(i, xy)
 
 
-def get_neighbors(current_population, person):
+def get_neighbors(current_population, person, radius=2):
     """
     builds dictionary of neighbors from current population to that person
     :param current_population: dictionary of the current population
     :param person: to find its neighbors
     :return: dictionary of (i,j)->neighbor
     """
+    start = -radius
+    end = radius + 1
     x, y = person.x, person.y
     neighbors = {}
-    for i in range(-2, 3):
-        for j in range(-2, 3):
+    for i in range(start, end):
+        for j in range(start, end):
             if (i != 0 or j != 0) and (x + i, y + j) in current_population:
                 neighbors[(x + i, y + j)] = (current_population[(x + i, y + j)])
     return neighbors
@@ -71,15 +73,16 @@ def update_potential_partner(current_population):
     """
     singles = [p for p in current_population.values() if p.sex != Sex.Couple]
     potential_couples = {}
+
     for person in singles:
-        best_match = person.best_match(get_neighbors(current_population, person))
+        best_match = person.best_match(get_neighbors(current_population, person, radius=1))
         potential_couples[person] = best_match
 
     couples = {}
     added = []
     for person1, person2 in potential_couples.items():
-        if (person2 in potential_couples) and (person1 not in added):
-            if potential_couples[person2] == person1:
+        if (person2 in potential_couples) and (person1 not in added):  # partner is here
+            if potential_couples[person2] == person1:  # mutual desire
                 couples[person1] = person2
                 added.append(person2)
     return couples
@@ -94,12 +97,20 @@ def next_generation():
     current_population = population.copy()
     population.clear()
 
-    couples = update_potential_partner(current_population)
+    couples = [couple for couple in current_population.values() if couple.sex == Sex.Couple]
+    for couple in couples:
+        neighbors = get_neighbors(current_population, couple, radius=1)
+        for neighbor in neighbors.values():
+            couple, neighbor = better_apart(couple, neighbor)
+            current_population[(couple.x, couple.y)] = couple
+            current_population[(neighbor.x, neighbor.y)] = neighbor
+
+    potential_couples = update_potential_partner(current_population)
 
     for index, person in current_population.items():
-        if person in couples:
-            population[(person.x, person.y)] = Couple(person, couples[person])
-        elif person not in couples.values():
+        if person in potential_couples:
+            population[(person.x, person.y)] = Couple(person, potential_couples[person])
+        elif person not in potential_couples.values():
             person.move(get_neighbors(current_population, person))
             population[(person.x, person.y)] = person
 
@@ -107,10 +118,34 @@ def next_generation():
 def happiness_value():
     happiness = 0
     for person in population.values():
-        happiness += person.happiness_val
+        happiness += person.happiness_val()
+
     return happiness
 
 
 def get_generation_number():
     global generations
     return generations
+
+
+def better_apart(couple, p):
+    """
+    checks if swapping gives a better happiness value
+    :param couple:
+    :param p: couple or person to swap
+    :return: new or same (coupe,p) tuple
+    """
+    if not CAN_BREAKUP:
+        return couple, p
+
+    current_val = couple.happiness_val() + p.happiness_val()
+    p = couple.swap(p)
+    new_val = couple.happiness_val() + p.happiness_val()
+    if new_val > current_val:
+        return couple, p
+    p = couple.swap(p)
+    return couple, p
+
+
+def singles_left():
+    return len([p for p in population.values() if p.sex != Sex.Couple]) > 0
