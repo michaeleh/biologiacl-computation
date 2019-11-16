@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 
-from question2.automata import generate_population, next_generation, population, get_generation_number, happiness_value
+from question2.automata import generate_population, next_generation, population, get_generation_number, happiness_value, \
+    singles_left
 from question2.gui import start_gui
 
 
@@ -23,12 +24,14 @@ if __name__ == "__main__":
     happiness_per_gen = {}
     generate_population()
 
-    for i in range(0, 20):
+    while True:
         sample_happiness()
         next_generation()
+        if not singles_left():
+            break
+    start_gui()
     sample_happiness()
 
     print(len(population))
-    start_gui()
 
     plot_happiness_per_generation()
