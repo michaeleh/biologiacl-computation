@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 
-from question2.automata import generate_population, next_generation, population, singles_left, happiness_per_gen
-from question2.config import SKIP_TO_THE_END
-from question2.gui import start_gui
+from automata import generate_population, next_generation, population, singles_left, happiness_per_gen
+from config import SKIP_TO_THE_END
+from gui import start_gui
 
 
 def plot_happiness_per_generation():

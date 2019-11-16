@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 
-from question2.config import *
+from config import *
 
 
 def get_cell_radius(x, y, r=1):

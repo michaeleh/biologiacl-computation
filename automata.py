@@ -1,7 +1,7 @@
 import random
 
-from question2.cell import Person, Sex, Couple
-from question2.config import *
+from cell import Person, Sex, Couple
+from config import *
 
 population = {}
 generations = 0
