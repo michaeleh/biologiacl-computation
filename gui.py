@@ -15,6 +15,7 @@ def draw_grid():
     """
     draws grid of white empty cells and then draws the people in their positions
     """
+
     labels[GENERATIONS].configure(text=f"generations: {get_generation_number()}")
     labels[HAPPINESS].configure(text=f"happiness: {happiness_value()}")
 
@@ -37,9 +38,11 @@ def start_gui():
     root = Tk()
     entries.clear()
     Button(root, text="Next Gen", command=update_grid, bg='purple', fg='white').grid(row=WIDTH // 2, column=HEIGHT)
-    gen_label = Label(root, text=f"generations: {get_generation_number()}")
+    generation_number = get_generation_number()
+    happy_value = happiness_value()
+    gen_label = Label(root, text=f"generations: {generation_number}")
     gen_label.grid(row=0, column=HEIGHT)
-    happiness_label = Label(root, text=f"happiness: {happiness_value()}")
+    happiness_label = Label(root, text=f"happiness: {happy_value}")
     happiness_label.grid(row=1, column=HEIGHT)
     labels[GENERATIONS] = gen_label
     labels[HAPPINESS] = happiness_label
