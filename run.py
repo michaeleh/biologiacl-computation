@@ -3,7 +3,7 @@ from question2.gui import start_gui
 
 if __name__ == "__main__":
     generate_population()
-    for i in range(0, 10000):
+    start_gui()
+    for i in range(0, 1000):
         next_generation()
     print(len(population))
-    start_gui()

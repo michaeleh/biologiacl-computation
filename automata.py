@@ -63,16 +63,16 @@ def get_neighbors(current_population, person):
     return neighbors
 
 
-def update_potential_partner(old_population):
+def update_potential_partner(current_population):
     """
     create dictionary of couples who both wants each other
-    :param old_population: population of people
+    :param current_population: population of people
     :return: dictionary of couples
     """
-    singles = [p for p in old_population.values() if p.sex != Sex.Couple]
+    singles = [p for p in current_population.values() if p.sex != Sex.Couple]
     potential_couples = {}
     for person in singles:
-        best_match = person.best_match(get_neighbors(old_population, person))
+        best_match = person.best_match(get_neighbors(current_population, person))
         potential_couples[person] = best_match
 
     couples = {}
@@ -91,27 +91,27 @@ def next_generation():
     """
     global generations
     generations += 1
-    old_population = population.copy()
+    current_population = population.copy()
     population.clear()
 
-    couples = update_potential_partner(old_population)
+    couples = update_potential_partner(current_population)
 
-    for index, person in old_population.items():
+    for index, person in current_population.items():
         if person in couples:
-            population[person.x, person.y] = Couple(person, couples[person])
+            population[(person.x, person.y)] = Couple(person, couples[person])
         elif person not in couples.values():
-            move(old_population, person)
+            move(current_population, person)
 
 
-def move(old_population, person):
+def move(current_population, person):
     """
     move cell
-    :param old_population:
+    :param current_population:
     :param person:
     :return:
     """
     x, y = person.x, person.y
-    person.move(get_neighbors(old_population, person))
+    person.move(get_neighbors(current_population, person))
     new_x = person.x
     new_y = person.y
     if (new_x, new_y) not in population:
