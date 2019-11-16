@@ -80,6 +80,9 @@ class Couple(Cell):
     def best_match(self):
         return None
 
+    def move(self, n):
+        pass
+
 
 class Sex(Enum):
     Male = "lightblue"
