@@ -5,6 +5,13 @@ from question2.config import *
 
 
 def get_cell_radius(x, y, r=1):
+    """
+    get radius of cells in range of grid
+    :param x: curr x
+    :param y: curr y
+    :param r: radius in cell units
+    :return: array of tuples (x,y)
+    """
     indexes = []
     start = -r
     end = r + 1
@@ -30,14 +37,20 @@ class Cell:
         return Sex.Other.value
 
     def move(self, neighbors):
-        possible_indexes = get_cell_radius(self.x, self.y)
+        """
+        move logic for cell
+        random move to must be empty cell
+        :param neighbors: 2-radius non empty cells
+        :return: update x and y
+        """
+        possible_indexes = get_cell_radius(self.x, self.y)  # possible moves
         for x, y in neighbors.keys():
-            radius = get_cell_radius(x, y)
+            radius = get_cell_radius(x, y)  # possible moves for neighbor
             for index in radius:
                 if index in possible_indexes:
-                    possible_indexes.remove(index)
+                    possible_indexes.remove(index)  # remove neighbor moves from cell moves
         if possible_indexes:
-            x, y = random.sample(possible_indexes, 1)[0]
+            x, y = random.sample(possible_indexes, 1)[0]  # pick random move
             self.x = x
             self.y = y
 
@@ -54,6 +67,11 @@ class Person(Cell):
         return self.sex.value
 
     def best_match(self, neighbor):
+        """
+        find best match for opposite sex with least diff in value
+        :param neighbor: a single person
+        :return: best match
+        """
         min_val = 101
         best_match = None
         for p in neighbor.values():
@@ -88,9 +106,15 @@ class Couple(Cell):
         return self.sex.value
 
     def swap(self, cell):
+        """
+        swap couple with 1 person or a couple
+        :param cell: a person or a couple to swap with
+        :return: new person swapped
+        """
         if cell.sex == Sex.Male:
             self.value = abs(self.woman.value - cell.value)
             return self.man.swap(cell)
+
         if cell.sex == Sex.Female:
             self.value = abs(self.man.value - cell.value)
             return self.woman.swap(cell)

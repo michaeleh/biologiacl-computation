@@ -15,6 +15,9 @@ def plot_happiness_per_generation():
 
 
 def sample_happiness():
+    """
+    get value of happiness at the current time point
+    """
     global generation_number, happy_value
     generation_number = get_generation_number()
     happy_value = happiness_value()

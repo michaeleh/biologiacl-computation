@@ -50,6 +50,7 @@ def generate_population(num_of_men=50, num_of_women=50):
 def get_neighbors(current_population, person, radius=2):
     """
     builds dictionary of neighbors from current population to that person
+    :param radius: how far to search
     :param current_population: dictionary of the current population
     :param person: to find its neighbors
     :return: dictionary of (i,j)->neighbor
@@ -71,15 +72,16 @@ def update_potential_partner(current_population):
     :param current_population: population of people
     :return: dictionary of couples
     """
-    singles = [p for p in current_population.values() if p.sex != Sex.Couple]
+    singles = [p for p in current_population.values() if p.sex != Sex.Couple]  # all singles
     potential_couples = {}
 
     for person in singles:
-        best_match = person.best_match(get_neighbors(current_population, person, radius=1))
+        best_match = person.best_match(get_neighbors(current_population, person, radius=1))  # best match for couple
         potential_couples[person] = best_match
 
     couples = {}
     added = []
+    # add only one of them
     for person1, person2 in potential_couples.items():
         if (person2 in potential_couples) and (person1 not in added):  # partner is here
             if potential_couples[person2] == person1:  # mutual desire
@@ -97,22 +99,31 @@ def next_generation():
     current_population = population.copy()
     population.clear()
 
-    couples = [couple for couple in current_population.values() if couple.sex == Sex.Couple]
-    for couple in couples:
-        neighbors = get_neighbors(current_population, couple, radius=1)
-        for neighbor in neighbors.values():
-            couple, neighbor = better_apart(couple, neighbor)
-            current_population[(couple.x, couple.y)] = couple
-            current_population[(neighbor.x, neighbor.y)] = neighbor
-
-    potential_couples = update_potential_partner(current_population)
+    current_population = breakup_couples_if_necessary(current_population)  # swap couples
+    potential_couples = update_potential_partner(current_population)  # new couples
 
     for index, person in current_population.items():
         if person in potential_couples:
             population[(person.x, person.y)] = Couple(person, potential_couples[person])
         elif person not in potential_couples.values():
-            person.move(get_neighbors(current_population, person))
+            person.move(get_neighbors(current_population, person))  # move regular non empty cells
             population[(person.x, person.y)] = person
+
+
+def breakup_couples_if_necessary(current_population):
+    """
+    search for better option in neighbors for each couple
+    :param current_population:
+    :return: new population with swapped couples
+    """
+    couples = [couple for couple in current_population.values() if couple.sex == Sex.Couple]
+    for couple in couples:
+        neighbors = get_neighbors(current_population, couple, radius=1)
+        for neighbor in neighbors.values():
+            couple, neighbor = swap_if_better(couple, neighbor)  # swap if better
+            current_population[(couple.x, couple.y)] = couple
+            current_population[(neighbor.x, neighbor.y)] = neighbor
+    return current_population
 
 
 def happiness_value():
@@ -128,7 +139,7 @@ def get_generation_number():
     return generations
 
 
-def better_apart(couple, p):
+def swap_if_better(couple, p):
     """
     checks if swapping gives a better happiness value
     :param couple:
@@ -148,4 +159,4 @@ def better_apart(couple, p):
 
 
 def singles_left():
-    return len([p for p in population.values() if p.sex != Sex.Couple]) > 0
+    return len([p for p in population.values() if p.sex != Sex.Couple]) > 0  # still singles found
