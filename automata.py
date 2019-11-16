@@ -5,6 +5,7 @@ from question2.config import *
 
 population = {}
 generations = 0
+happiness_per_gen = {}
 
 
 def generate_indexes(num):
@@ -108,6 +109,7 @@ def next_generation():
         elif person not in potential_couples.values():
             person.move(get_neighbors(current_population, person))  # move regular non empty cells
             population[(person.x, person.y)] = person
+    happiness_per_gen[generations] = happiness_value()
 
 
 def breakup_couples_if_necessary(current_population):
