@@ -56,8 +56,8 @@ def get_neighbors(current_population, person):
     """
     x, y = person.x, person.y
     neighbors = {}
-    for i in range(-1, 2):
-        for j in range(-1, 2):
+    for i in range(-2, 3):
+        for j in range(-2, 3):
             if (i != 0 or j != 0) and (x + i, y + j) in current_population:
                 neighbors[(x + i, y + j)] = (current_population[(x + i, y + j)])
     return neighbors
@@ -100,25 +100,8 @@ def next_generation():
         if person in couples:
             population[(person.x, person.y)] = Couple(person, couples[person])
         elif person not in couples.values():
-            move(current_population, person)
-
-
-def move(current_population, person):
-    """
-    move cell
-    :param current_population:
-    :param person:
-    :return:
-    """
-    x, y = person.x, person.y
-    person.move(get_neighbors(current_population, person))
-    new_x = person.x
-    new_y = person.y
-    if (new_x, new_y) not in population:
-        population[(new_x, new_y)] = person
-    else:
-        person.x, person.y = x, y
-        population[(x, y)] = person
+            person.move(get_neighbors(current_population, person))
+            population[(person.x, person.y)] = person
 
 
 def happiness_value():
