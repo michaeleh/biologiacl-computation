@@ -50,7 +50,7 @@ class Cell:
                 if index in possible_indexes:
                     possible_indexes.remove(index)  # remove neighbor moves from cell moves
         if possible_indexes:
-            x, y = random.sample(possible_indexes, 1)[0]  # pick random move
+            x, y = possible_indexes[int(self.value) % len(possible_indexes)]  # pick random move
             self.x = x
             self.y = y
 

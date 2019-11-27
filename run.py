@@ -15,8 +15,9 @@ def plot_happiness_per_generation():
 
 if __name__ == "__main__":
     generate_population()
-
-    while SKIP_TO_THE_END:
+    i = 0
+    while SKIP_TO_THE_END and i < 300:
+        i += 1
         next_generation()
         if not singles_left():
             break
