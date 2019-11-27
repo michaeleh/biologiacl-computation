@@ -44,13 +44,15 @@ class Cell:
         :return: update x and y
         """
         possible_indexes = get_cell_radius(self.x, self.y)  # possible moves
+        neighbors_value = 0
         for x, y in neighbors.keys():
+            neighbors_value += neighbors[(x, y)].value
             radius = get_cell_radius(x, y)  # possible moves for neighbor
             for index in radius:
                 if index in possible_indexes:
                     possible_indexes.remove(index)  # remove neighbor moves from cell moves
         if possible_indexes:
-            x, y = possible_indexes[int(self.value) % len(possible_indexes)]  # pick random move
+            x, y = possible_indexes[neighbors_value % len(possible_indexes)]  # pick random move
             self.x = x
             self.y = y
 
